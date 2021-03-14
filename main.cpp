@@ -1,5 +1,6 @@
 #include <iostream> // input/output
 #include <stack>    // stack data structure
+#include <queue>
 //#include <math.h>   // quick maths
 #include <string>   // guess what this does?
 #include <sstream>  // stringstreams
@@ -40,18 +41,54 @@ bool isNumber(string s) {
   return true;
 }
 
-// e.g. expression = "2 3 +"
+// Splits expression into queue
+queue<string> string2queue(string expression) {
+  queue<string> token_queue;
+  /*
+  token_queue.push(3)   -> enqueues element
+  token_queue.pop()     -> dequeues element
+  token_queue.front()   -> gets first element
+  */
+
+  // empty string token
+  string token = "";
+
+  // iterating through expression
+  for (int i = 0; i < expression.size(); i++) {
+    char letter = expression[i];
+
+    // found an actual token
+    if (letter != ' ') token += letter;
+    else {      // found a whitespace char
+      if (!token.empty()) { // protects against multiple whitespaces
+        // ready to push token to queue
+        token_queue.push(token);
+        token="";
+      } // else, just another whitespace, keep going
+    }
+  }
+  // adds token at the end of the expression (edge case)
+  if ( !token.empty() ) token_queue.push(token);
+
+  return token_queue;
+}
+
+
+// evaluate RPN expression
 int solve(string expression) {
 
-  // big stack of numbers
+  // generating queue of tokens
+  queue<string> token_queue = string2queue(expression);
+
+  // big 'ol stack of numbers
   stack<int> numberStack;
 
-  stringstream fakeCin;
-  fakeCin << expression;
+  while (!token_queue.empty()) {
+    // getting the token at the front of the queue
+    string token = token_queue.front();
+    token_queue.pop();
 
-  string token;
-  while (fakeCin >> token) {
-
+    // checking if token is a number
     if (isNumber(token)) {
       //cout << token << " is number\n";
       // pushing number to stack
@@ -139,16 +176,17 @@ int main() {
   // run test expressions
   bool success = runTests();
 
-  /*
-  // simple prompt
-  cout << "Enter RPN: ";
-
-  // input RPN expression
   string expression;
+
+  // read RPN expression
+  cout << "Enter RPN: ";
   getline(cin, expression);
 
-  cout << solve(expression);
-  */
+  // evaluate expression
+  int result = solve(expression);
+
+  // print output
+  cout << result << endl;
 
   return 0;
 }
