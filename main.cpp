@@ -6,7 +6,6 @@
 
 using namespace std;
 
-stack<int> numberStack;
 
 /*
 numberStack.push(5); -> puts element into stack
@@ -20,25 +19,30 @@ numberStack.empty()  -> [BOOL] whether it is emtpy
 // Returns whether string is a number
 bool isNumber(string s) {
   // looping over chars in string
-  for (char letter : s) {
+
+  for (int i = 0; i < s.size(); i++) {
+    char letter = s[i];
+
     // if ASCII code doesn't match a digit
-    if (letter < '0' || letter > '9')
+    if (letter < '0' || letter > '9') {      // checks if is digit
+      if (letter == '-' && i == 0) continue; // checks minus case
       return false;
+    }
   }
   // found an actual number
   return true;
 }
 
-int main() {
+// e.g. expression = "2 3 +"
+int resolve(string expression) {
 
-  // read RPN expression
-  cout << "Enter RPN: ";
+  stack<int> numberStack;
+
+  stringstream fakeCin;
+  fakeCin << expression;
+
   string token;
-  while (true) {
-    // reading tokens
-    cin >> token;
-
-    if (token == "x") break;
+  while (fakeCin >> token) {
 
     if (isNumber(token)) {
       // pushing number to stack
@@ -48,7 +52,7 @@ int main() {
       // found an operator
       if (numberStack.size() < 2) {
         cout << "SYNTAX ERROR - Not enough numbers in stack\n";
-        return 1;
+        exit(1);
       }
 
       // getting and popping the RH operand
@@ -68,7 +72,7 @@ int main() {
       // checking for invalid operators
       else {
         cout << "INVALID INPUT - This operator doesn't exist\n";
-        return 1;
+        exit(1);
       }
 
       // pushing result to number stack
@@ -81,15 +85,31 @@ int main() {
 
   // If we got anything other than one, something went wrong.
   if (stackSize != 1) {
-    cout << "SYNTAX ERROR - not enough operators\n";
-    return 1;
+    cout << "SYNTAX ERROR - Not enough operators\n";
+    exit(1);
   }
 
   // Pop result and print it
   int result = numberStack.top();
   numberStack.pop();
 
-  cout << "Result: " << result << "\n";
+  return result;
+}
+
+int main() {
+  // simple prompt
+  cout << "Enter RPN: ";
+
+  // input RPN expression
+  string expression;
+  getline(cin, expression);
+
+  string e1 = "2 3 +";
+  if (resolve(e1) != 5) {
+    cout << "FAILED TEST\n";
+  }
+
+  cout << resolve(expression);
 
   return 0;
 }
