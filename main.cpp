@@ -4,6 +4,8 @@
 #include <string>   // guess what this does?
 #include <sstream>  // stringstreams
 
+#include <vector>
+
 using namespace std;
 
 
@@ -20,12 +22,17 @@ numberStack.empty()  -> [BOOL] whether it is emtpy
 bool isNumber(string s) {
   // looping over chars in string
 
+  // checking for empty input
+  if (s.size() == 0) return false;
+
   for (int i = 0; i < s.size(); i++) {
     char letter = s[i];
 
     // if ASCII code doesn't match a digit
     if (letter < '0' || letter > '9') {      // checks if is digit
-      if (letter == '-' && i == 0) continue; // checks minus case
+      // checks minus case
+      if ((letter == '-' && i == 0) && s.size() > 1)
+        continue;
       return false;
     }
   }
@@ -34,8 +41,9 @@ bool isNumber(string s) {
 }
 
 // e.g. expression = "2 3 +"
-int resolve(string expression) {
+int solve(string expression) {
 
+  // big stack of numbers
   stack<int> numberStack;
 
   stringstream fakeCin;
@@ -45,6 +53,7 @@ int resolve(string expression) {
   while (fakeCin >> token) {
 
     if (isNumber(token)) {
+      //cout << token << " is number\n";
       // pushing number to stack
       int numToken = stoi(token);
       numberStack.push(numToken);
@@ -96,7 +105,41 @@ int resolve(string expression) {
   return result;
 }
 
+// list of test expressions & expected output
+vector< pair<string, int> > tests{
+  {"2 3 +", 5},
+  {"2 3 *", 6},
+  {"-123123 -123123 +", -246246},
+  {"2 2 + 3 - 123 - 24 *", -2928},
+  {"5 3 + 7 15 * 8 + -", -105},
+};
+
+// run test expressions
+bool runTests() {
+  bool success = true;
+
+  // looping through tests
+  for (auto test : tests) {
+    // solve expression
+    int result = solve(test.first);
+
+    // comparing solve() output with expected output
+    if (result != test.second) {
+      // current test failed
+      cout << "FAILED TEST " << test.first << endl;
+      cout << "EXPECTED " << test.second << " GOT " << result << endl;
+      success = false;
+    } else cout << "SUCCESS!\n";
+  }
+  return success;
+}
+
 int main() {
+
+  // run test expressions
+  bool success = runTests();
+
+  /*
   // simple prompt
   cout << "Enter RPN: ";
 
@@ -104,12 +147,8 @@ int main() {
   string expression;
   getline(cin, expression);
 
-  string e1 = "2 3 +";
-  if (resolve(e1) != 5) {
-    cout << "FAILED TEST\n";
-  }
-
-  cout << resolve(expression);
+  cout << solve(expression);
+  */
 
   return 0;
 }
