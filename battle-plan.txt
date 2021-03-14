@@ -1,0 +1,20 @@
+1. Shunting Yard Algorithm
+
+Math expression -> RPN
+(infix notation -> postfix notation)
+
+2. Postfix Expression Evaluator
+
+RPN -> result
+
+OK 2.1 How 2 read Math expression?
+    * separate tokens using space char
+
+2.2 Class Token
+    * Attributes
+        * TYPE -> Number, Operator
+        * Value
+    * Methods
+
+* 2.3 Error Handling
+    * Syntax Error, etc.
