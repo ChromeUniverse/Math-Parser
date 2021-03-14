@@ -1,7 +1,8 @@
 #include <iostream> // input/output
+#include <typeinfo>
 #include <stack>    // stack data structure
 #include <queue>
-//#include <math.h>   // quick maths
+#include <math.h>   // quick maths
 #include <string>   // guess what this does?
 #include <sstream>  // stringstreams
 
@@ -19,6 +20,9 @@ numberStack.size()   -> number of elements
 numberStack.empty()  -> [BOOL] whether it is emtpy
 */
 
+
+
+
 // Returns whether string is a number
 bool isNumber(string s) {
   // looping over chars in string
@@ -29,17 +33,24 @@ bool isNumber(string s) {
   for (int i = 0; i < s.size(); i++) {
     char letter = s[i];
 
-    // if ASCII code doesn't match a digit
-    if (letter < '0' || letter > '9') {      // checks if is digit
+    // check if letter isn't digit or decimal point
+    if (letter < '0' || letter > '9') {
       // checks minus case
       if ((letter == '-' && i == 0) && s.size() > 1)
         continue;
+      // checks decimal point case
+      if (letter == '.') continue;
+
       return false;
     }
   }
   // found an actual number
   return true;
 }
+
+
+
+
 
 // Splits expression into queue
 queue<string> string2queue(string expression) {
@@ -57,12 +68,13 @@ queue<string> string2queue(string expression) {
   for (int i = 0; i < expression.size(); i++) {
     char letter = expression[i];
 
-    // found an actual token
+    // adding letter to token
     if (letter != ' ') token += letter;
     else {      // found a whitespace char
       if (!token.empty()) { // protects against multiple whitespaces
         // ready to push token to queue
         token_queue.push(token);
+        //cout << "This is token, right here: " << token << endl;
         token="";
       } // else, just another whitespace, keep going
     }
@@ -74,14 +86,38 @@ queue<string> string2queue(string expression) {
 }
 
 
+
+
+// print elements in a queue
+void print_queue(queue<string> q){
+  int i = 0;
+  while (!q.empty())
+  {
+    cout << i << "-th element: " << q.front() << endl;
+    q.pop();
+    i++;
+  }
+  cout << endl;
+}
+
+
+
+
 // evaluate RPN expression
-int solve(string expression) {
+double solve(string expression) {
 
   // generating queue of tokens
   queue<string> token_queue = string2queue(expression);
 
+  /*
+  // print copy of token_queue
+  queue<string> q_copy = token_queue;
+  print_queue(q_copy);
+  */
+
+
   // big 'ol stack of numbers
-  stack<int> numberStack;
+  stack<double> numberStack;
 
   while (!token_queue.empty()) {
     // getting the token at the front of the queue
@@ -91,8 +127,10 @@ int solve(string expression) {
     // checking if token is a number
     if (isNumber(token)) {
       //cout << token << " is number\n";
+
+      // Converting string token to double
+      double numToken = stod(token);
       // pushing number to stack
-      int numToken = stoi(token);
       numberStack.push(numToken);
     } else {
       // found an operator
@@ -102,19 +140,25 @@ int solve(string expression) {
       }
 
       // getting and popping the RH operand
-      int b = numberStack.top();
+      //cout << numberStack.top() << " is a: " << typeid(numberStack.top()).name() << endl;
+      double b = numberStack.top() + 0.0;
       numberStack.pop();
+      //cout << b << " is: " << typeid(b).name() << endl;
       // getting and popping the LH operand
-      int a = numberStack.top();
+      //cout << numberStack.top() << " is a: " << typeid(numberStack.top()).name() << endl;
+      double a = numberStack.top() + 0.0;
       numberStack.pop();
+      //cout << a << " is: " << typeid(a).name() << endl;
 
       // operation result
-      int result = 0;
+      double result = 0;
 
       // executing operation
-      if (token == "+") result = a + b;
-      else if (token == "-") result = a - b;
-      else if (token == "*") result = a * b;
+      if (token == "+") result = a + b;           // addition
+      else if (token == "-") result = a - b;      // subtraction
+      else if (token == "*") result = a * b;      // multiplication
+      else if (token == "/") result = a / b;      // division
+      else if (token == "^") result = pow(a, b);  // exponentiation
       // checking for invalid operators
       else {
         cout << "INVALID INPUT - This operator doesn't exist\n";
@@ -136,20 +180,31 @@ int solve(string expression) {
   }
 
   // Pop result and print it
-  int result = numberStack.top();
+  double result = numberStack.top();
   numberStack.pop();
 
   return result;
 }
 
+
+
+
+
 // list of test expressions & expected output
-vector< pair<string, int> > tests{
-  {"2 3 +", 5},
-  {"2 3 *", 6},
-  {"-123123 -123123 +", -246246},
-  {"2 2 + 3 - 123 - 24 *", -2928},
-  {"5 3 + 7 15 * 8 + -", -105},
+vector< pair<string, double> > tests{
+  /*1*/{"2 3 +", 5},
+  /*2*/{"2 3 *", 6},
+  /*3*/{"-123123 -123123 +", -246246},
+  /*4*/{"2 2 + 3 - 123 - 24 *", -2928},
+  /*5*/{"5 3 + 7 15 * 8 + -", -105},
+  /*6*/{"2.00 3.99 +", 5.99},
+  /*7*/{"4.00 2.00 /", 2.00},
+  /*8*/{"2.0 5.0 ^", 32.0},
 };
+
+
+
+
 
 // run test expressions
 bool runTests() {
@@ -158,7 +213,7 @@ bool runTests() {
   // looping through tests
   for (auto test : tests) {
     // solve expression
-    int result = solve(test.first);
+    double result = solve(test.first);
 
     // comparing solve() output with expected output
     if (result != test.second) {
@@ -171,11 +226,18 @@ bool runTests() {
   return success;
 }
 
+
+
+
+
+
+// main program function
 int main() {
 
   // run test expressions
   bool success = runTests();
 
+  /*
   string expression;
 
   // read RPN expression
@@ -183,10 +245,11 @@ int main() {
   getline(cin, expression);
 
   // evaluate expression
-  int result = solve(expression);
+  double result = solve(expression);
 
   // print output
   cout << result << endl;
+  */
 
   return 0;
 }
