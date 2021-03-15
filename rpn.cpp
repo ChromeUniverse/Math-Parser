@@ -1,3 +1,12 @@
+/*
+    -- RPN Parser --
+
+    Parses and evaluates reverse polish
+    notation expressions.
+
+*/
+
+
 #include <iostream> // input/output
 #include <typeinfo>
 #include <stack>    // stack data structure
