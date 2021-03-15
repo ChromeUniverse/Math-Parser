@@ -221,7 +221,7 @@ bool runTests() {
       cout << "FAILED TEST " << test.first << endl;
       cout << "EXPECTED " << test.second << " GOT " << result << endl;
       success = false;
-    } else cout << "SUCCESS!\n";
+    }
   }
   return success;
 }
@@ -236,6 +236,7 @@ int main() {
 
   // run test expressions
   bool success = runTests();
+  if (success) cout << "SUCCESS!";
 
   /*
   string expression;
