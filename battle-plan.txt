@@ -1,7 +1,14 @@
 1. Shunting Yard Algorithm
 
+Converts:
 Math expression -> RPN
 (infix notation -> postfix notation)
+
+input expression -> input queue
+  * queue of tokens
+
+input queue -> rpn queue
+
 
 2. Postfix Expression Evaluator
 
