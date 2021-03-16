@@ -1,6 +1,6 @@
 # The Calculator
 
-## An infix/postfix mathematical expresison parser and evaluator.
+## An infix/postfix mathematical expresison parser and evaluator
 
 This calculator can read infix math expressions, convert them to Reverse Polish Notation and evaluate the expression's result.
 
