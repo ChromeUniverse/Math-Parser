@@ -28,14 +28,17 @@ Expression result:
 2. Compile source files
 
 * Infix to postfix converter:
+
   `g++ shunting_yard.cpp -o shunting_yard`
 
 * RPN evaluator:
+
   `g++ rpn.cpp -o rpn`
 
 * Full calculator:
+
   `g++ calc.cpp -o calc`
-  
+
 
 3. Run executable
 
