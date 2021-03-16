@@ -1,21 +1,17 @@
 /*
-    -- Shunting Yard algorithm --
+    -- Calculator --
 
-    Implementation of Dijkstra's Shunting
-    Yard algorithm in C++.
-
-    Converts infix expressions to postfix
-    expressions (a.k.a. RPN).
+    A math infix expression evaluator built with C++.
 
 */
 
 
 #include <iostream> // input/output
 //#include <typeinfo> // object type info
-//#include <math.h>   // 2 plus 2 is 4, minus 1, that's 3, quick maths
+#include <math.h>   // 2 plus 2 is 4, minus 1, that's 3, quick maths
 #include <string>   // guess what this does?
 
-//#include <vector>   // glorious vectors
+#include <vector>   // glorious vectors
 #include <stack>    // stack data structure
 #include <queue>    // queue data structure
 
@@ -413,6 +409,100 @@ queue<Token> shunt( queue<Token> input_queue ) {
 
 
 
+// solve function
+// -> evaluate RPN expression
+double solve(queue<Token> rpn_queue) {
+
+  // generating queue of tokens
+  //queue<string> token_queue = string2queue(expression);
+
+  /*
+  // print copy of token_queue
+  queue<string> q_copy = token_queue;
+  print_queue(q_copy);
+  */
+
+
+  // big 'ol stack of numbers
+  stack<double> numberStack;
+
+  while (!rpn_queue.empty()) {
+    // getting the token at the front of the queue
+    Token token = rpn_queue.front();
+    rpn_queue.pop();
+
+    // checking if token is a number
+    if ( token.getType() == 0 ) {
+      //cout << token << " is number\n";
+
+      // Converting string token to double
+      double numToken = stod(token.getText());
+      // pushing number to stack
+      numberStack.push(numToken);
+    } else if ( token.getType() == 1 ) {
+      // found an operator
+      if (numberStack.size() < 2) {
+        cout << "SYNTAX ERROR - Not enough numbers in stack\n";
+        exit(1);
+      }
+
+      // getting and popping the RH operand
+      //cout << numberStack.top() << " is a: " << typeid(numberStack.top()).name() << endl;
+      double b = numberStack.top() + 0.0;
+      numberStack.pop();
+      //cout << b << " is: " << typeid(b).name() << endl;
+      // getting and popping the LH operand
+      //cout << numberStack.top() << " is a: " << typeid(numberStack.top()).name() << endl;
+      double a = numberStack.top() + 0.0;
+      numberStack.pop();
+      //cout << a << " is: " << typeid(a).name() << endl;
+
+      // operation result
+      double result = 0;
+
+      string token_text = token.getText();
+
+      // executing operation
+      if (token_text == "+") result = a + b;           // addition
+      else if (token_text == "-") result = a - b;      // subtraction
+      else if (token_text == "*") result = a * b;      // multiplication
+      else if (token_text == "/") result = a / b;      // division
+      else if (token_text == "^") result = pow(a, b);  // exponentiation
+      // checking for invalid operators
+      else {
+        cout << "INVALID INPUT - This operator doesn't exist\n";
+        exit(1);
+      }
+
+      // pushing result to number stack
+      numberStack.push(result);
+    }
+  }
+
+  // cheking the size of the number stack
+  int stackSize = numberStack.size();
+
+  // If we got anything other than one, something went wrong.
+  if (stackSize != 1) {
+    cout << "SYNTAX ERROR - Not enough operators\n";
+    exit(1);
+  }
+
+  // Pop result and print it
+  double result = numberStack.top();
+  numberStack.pop();
+
+  return result;
+}
+
+
+
+
+
+
+
+
+
 
 
 
@@ -432,15 +522,21 @@ int main() {
   queue<Token> input_queue = input(expression);
 
   // print copy of token queue
-  cout << "\nHere is parsed input:" << endl;
-  print_queue(input_queue);
+  //cout << "\nHere is parsed input:" << endl;
+  //print_queue(input_queue);
 
 
   // run Shunting Yard
   queue<Token> rpn_queue = shunt(input_queue);
 
-  cout << "\nHere is the RPN output:" << endl;
-  print_queue(rpn_queue);
+  //cout << "\nHere is the RPN output:" << endl;
+  //print_queue(rpn_queue);
+
+
+  // calculate the expression
+  double result = solve(rpn_queue);
+  cout << "The result is " << result << endl;
+
 
   return 0;
 }

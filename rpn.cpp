@@ -247,7 +247,7 @@ int main() {
   bool success = runTests();
   if (success) cout << "SUCCESS!";
 
-  /*
+
   string expression;
 
   // read RPN expression
@@ -259,7 +259,7 @@ int main() {
 
   // print output
   cout << result << endl;
-  */
+  
 
   return 0;
 }
