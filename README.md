@@ -23,7 +23,7 @@ Expression result:
 
 1. Clone this repo
 
-`git clone https://github.com/ChromeUniverse/Math-Parser.git`
+  `git clone https://github.com/ChromeUniverse/Math-Parser.git`
 
 2. Compile source files
 
