@@ -19,6 +19,21 @@ Expression result:
 `-5.08368`
 
 
+## Usage
+
+1. Clone this repo
+
+`git clone https://github.com/ChromeUniverse/Math-Parser.git`
+
+2. Compile source files
+
+`g++ calc.cpp -o calc`
+
+3. Run executable
+
+_Note: check executable file permissions, you might need to use_ `chmod`
+
+
 ## Supported operations:
 
 * Addition
