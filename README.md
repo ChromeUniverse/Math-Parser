@@ -1,4 +1,4 @@
-# The Calculator
+# C++ Math Parser
 
 ## An infix/postfix mathematical expresison parser and evaluator
 
